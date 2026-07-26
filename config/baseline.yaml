@@ -1,0 +1,71 @@
+contract:
+  name: zero_dte_intraday_momentum_v1
+  measurement_mode: native_numeric
+  target_direction: increase
+  unit: USD_per_trading_day
+  baseline_value: 0.0
+  target_value: 200.0
+  preferred_target_max: 400.0
+  current_value: 0.0
+  gap_value: 200.0
+  progress_delta_value: 0.0
+
+market:
+  underlying: SPY
+  timezone: America/New_York
+  bar_minutes: 5
+  opening_range_minutes: 30
+  entry_start: "10:00"
+  last_entry: "14:30"
+  hard_exit: "15:30"
+
+signal:
+  fast_ema: 9
+  slow_ema: 21
+  momentum_lookback_bars: 3
+  minimum_momentum_fraction: 0.0005
+  volume_z_lookback: 20
+  minimum_volume_z: 0.50
+  minimum_opening_range_fraction: 0.0015
+  maximum_opening_range_fraction: 0.0120
+
+option_selection:
+  target_abs_delta: 0.45
+  minimum_abs_delta: 0.35
+  maximum_abs_delta: 0.55
+  maximum_spread_fraction_of_mid: 0.12
+  minimum_bid: 0.05
+  minimum_open_interest: 500
+  minimum_contract_volume: 50
+  maximum_quote_age_seconds: 60
+
+risk:
+  starting_equity: 25000.0
+  max_capital_at_risk_fraction: 0.0075
+  max_contracts: 2
+  option_stop_loss_fraction: 0.35
+  option_profit_target_fraction: 0.60
+  trailing_activation_fraction: 0.30
+  trailing_giveback_fraction: 0.20
+  max_hold_minutes: 45
+  daily_loss_limit_fraction: 0.010
+  max_trades_per_day: 2
+  max_consecutive_losses: 2
+
+execution:
+  contract_multiplier: 100
+  commission_per_contract_each_way: 0.65
+  slippage_fraction_of_spread: 0.25
+  minimum_slippage: 0.01
+  require_market_data_bid_ask: true
+  allow_live_trading: false
+
+validation:
+  minimum_out_of_sample_trades: 150
+  minimum_profit_factor: 1.20
+  maximum_drawdown_fraction: 0.10
+  minimum_bootstrap_mean_daily_pnl_95_lower: 0.0
+  maximum_single_day_profit_concentration: 0.20
+  paper_incubation_days: 30
+  monte_carlo_iterations: 10000
+  random_seed: 23
