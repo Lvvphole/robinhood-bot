@@ -8,6 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 MAX_AGENTS_LINES = 120
 STALE_AFTER_DAYS = 90
+CLAUDE_CANONICAL = "# CLAUDE.md\n\n@AGENTS.md\n"
 
 REQUIRED = [
     "AGENTS.md",
@@ -81,9 +82,11 @@ def check_claude_contract(errors: list[str]) -> None:
     path = ROOT / "CLAUDE.md"
     if not path.exists():
         return
-    lines = [line.strip() for line in path.read_text(encoding="utf-8").splitlines()]
-    if "@AGENTS.md" not in lines:
-        errors.append("CLAUDE.md must import @AGENTS.md so Claude Code receives the authoritative contract")
+    if path.read_text(encoding="utf-8") != CLAUDE_CANONICAL:
+        errors.append(
+            "CLAUDE.md must exactly match the canonical compatibility entry point so @AGENTS.md "
+            "cannot be hidden in a code fence or duplicated with divergent rules"
+        )
 
 
 def check_metadata(errors: list[str]) -> None:
