@@ -6,14 +6,28 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT = ROOT / "docs/generated/repo-map.md"
-IGNORE_DIRS = {".git", ".pytest_cache", "__pycache__", ".mypy_cache", ".ruff_cache", ".venv", "venv"}
+IGNORE_DIRS = {
+    ".git",
+    ".pytest_cache",
+    "__pycache__",
+    ".mypy_cache",
+    ".ruff_cache",
+    ".venv",
+    "venv",
+    "build",
+    "dist",
+}
+
+
+def ignored(rel: Path) -> bool:
+    return any(part in IGNORE_DIRS or part.endswith(".egg-info") for part in rel.parts)
 
 
 def paths() -> list[str]:
     result: list[str] = []
     for path in ROOT.rglob("*"):
         rel = path.relative_to(ROOT)
-        if any(part in IGNORE_DIRS for part in rel.parts):
+        if ignored(rel):
             continue
         if path == OUTPUT:
             continue

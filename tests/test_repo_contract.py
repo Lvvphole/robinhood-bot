@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -24,3 +25,13 @@ def test_repository_knowledge_contract() -> None:
 
 def test_generated_repo_map_is_current() -> None:
     run("tools/generate_repo_map.py", "--check")
+
+
+def test_generated_repo_map_ignores_editable_install_metadata() -> None:
+    metadata = ROOT / "src" / "contract_fixture.egg-info"
+    metadata.mkdir()
+    (metadata / "PKG-INFO").write_text("fixture\n", encoding="utf-8")
+    try:
+        run("tools/generate_repo_map.py", "--check")
+    finally:
+        shutil.rmtree(metadata)
