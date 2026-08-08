@@ -8,9 +8,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 MAX_AGENTS_LINES = 120
 STALE_AFTER_DAYS = 90
+CLAUDE_CANONICAL = "# CLAUDE.md\n\n@AGENTS.md\n"
 
 REQUIRED = [
     "AGENTS.md",
+    "CLAUDE.md",
     "ARCHITECTURE.md",
     "docs/DESIGN.md",
     "docs/PLANS.md",
@@ -73,6 +75,17 @@ def check_agents_size(errors: list[str]) -> None:
         errors.append(
             f"AGENTS.md has {len(lines)} lines; max is {MAX_AGENTS_LINES}. "
             "Move detail into linked repository docs."
+        )
+
+
+def check_claude_contract(errors: list[str]) -> None:
+    path = ROOT / "CLAUDE.md"
+    if not path.exists():
+        return
+    if path.read_text(encoding="utf-8") != CLAUDE_CANONICAL:
+        errors.append(
+            "CLAUDE.md must exactly match the canonical compatibility entry point so @AGENTS.md "
+            "cannot be hidden in a code fence or duplicated with divergent rules"
         )
 
 
@@ -156,6 +169,7 @@ def main() -> int:
     errors: list[str] = []
     check_required(errors)
     check_agents_size(errors)
+    check_claude_contract(errors)
     check_metadata(errors)
     check_freshness(errors)
     check_links(errors)

@@ -1,7 +1,7 @@
 # AGENTS.md
 
 ## Authority
-This file is the small, stable entry point for agents working in `Lvvphole/robinhood-bot`.
+This file is the small, stable entry point for agents working in this repository.
 It is a map, not the repository encyclopedia. Repository-local docs, schemas, tests, plans, and generated artifacts are the system of record.
 
 Authority for claims and actions:
@@ -55,6 +55,7 @@ When an agent fails, do not "try harder" blindly. Identify the missing capabilit
 ## Repository Knowledge Rules
 - Durable project knowledge belongs in the repository, not chat, memory, or private scratchpads.
 - Keep `AGENTS.md` short; deeper rules belong in the linked docs.
+- `CLAUDE.md` is the Claude Code compatibility entry point and must import `AGENTS.md`; shared repository rules must not be duplicated there.
 - Update docs in the same PR when behavior, architecture, constraints, or operating assumptions change.
 - Promote repeated review feedback into documentation, tests, linters, schemas, or tooling.
 - Generated docs must be regenerated, not hand-edited.

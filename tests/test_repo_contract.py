@@ -6,6 +6,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+CLAUDE_CANONICAL = "# CLAUDE.md\n\n@AGENTS.md\n"
 
 
 def run(script: str, *args: str) -> None:
@@ -35,3 +36,7 @@ def test_generated_repo_map_ignores_editable_install_metadata() -> None:
         run("tools/generate_repo_map.py", "--check")
     finally:
         shutil.rmtree(metadata)
+
+
+def test_claude_code_contract_is_canonical_import() -> None:
+    assert (ROOT / "CLAUDE.md").read_text(encoding="utf-8") == CLAUDE_CANONICAL

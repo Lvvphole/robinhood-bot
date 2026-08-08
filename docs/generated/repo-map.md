@@ -11,6 +11,7 @@ Do not hand-edit. Regenerate with `python tools/generate_repo_map.py`.
 - `.github/workflows/repo-garden.yml`
 - `AGENTS.md`
 - `ARCHITECTURE.md`
+- `CLAUDE.md`
 - `README.md`
 - `STATUS.md`
 - `config/baseline.yaml`
