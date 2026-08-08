@@ -11,6 +11,7 @@ STALE_AFTER_DAYS = 90
 
 REQUIRED = [
     "AGENTS.md",
+    "CLAUDE.md",
     "ARCHITECTURE.md",
     "docs/DESIGN.md",
     "docs/PLANS.md",
@@ -74,6 +75,15 @@ def check_agents_size(errors: list[str]) -> None:
             f"AGENTS.md has {len(lines)} lines; max is {MAX_AGENTS_LINES}. "
             "Move detail into linked repository docs."
         )
+
+
+def check_claude_contract(errors: list[str]) -> None:
+    path = ROOT / "CLAUDE.md"
+    if not path.exists():
+        return
+    lines = [line.strip() for line in path.read_text(encoding="utf-8").splitlines()]
+    if "@AGENTS.md" not in lines:
+        errors.append("CLAUDE.md must import @AGENTS.md so Claude Code receives the authoritative contract")
 
 
 def check_metadata(errors: list[str]) -> None:
@@ -156,6 +166,7 @@ def main() -> int:
     errors: list[str] = []
     check_required(errors)
     check_agents_size(errors)
+    check_claude_contract(errors)
     check_metadata(errors)
     check_freshness(errors)
     check_links(errors)

@@ -35,3 +35,8 @@ def test_generated_repo_map_ignores_editable_install_metadata() -> None:
         run("tools/generate_repo_map.py", "--check")
     finally:
         shutil.rmtree(metadata)
+
+
+def test_claude_code_contract_imports_agents() -> None:
+    lines = (ROOT / "CLAUDE.md").read_text(encoding="utf-8").splitlines()
+    assert "@AGENTS.md" in {line.strip() for line in lines}
