@@ -31,8 +31,27 @@ REQUIRED = [
     "docs/references/harness-engineering.md",
 ]
 
-META_DOCS = [path for path in REQUIRED if path.startswith("docs/") or path == "ARCHITECTURE.md"]
+GOVERNED_DIRS = [
+    ROOT / "docs/design-docs",
+    ROOT / "docs/exec-plans",
+    ROOT / "docs/product-specs",
+    ROOT / "docs/references",
+]
 LINK = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
+
+
+def governed_meta_docs() -> list[str]:
+    paths = {"ARCHITECTURE.md"}
+    for path in (ROOT / "docs").glob("*.md"):
+        paths.add(path.relative_to(ROOT).as_posix())
+    generated = ROOT / "docs/generated/repo-map.md"
+    if generated.exists():
+        paths.add(generated.relative_to(ROOT).as_posix())
+    for directory in GOVERNED_DIRS:
+        if directory.exists():
+            for path in directory.rglob("*.md"):
+                paths.add(path.relative_to(ROOT).as_posix())
+    return sorted(paths)
 
 
 def fail(message: str) -> None:
@@ -58,10 +77,8 @@ def check_agents_size(errors: list[str]) -> None:
 
 
 def check_metadata(errors: list[str]) -> None:
-    for rel in META_DOCS:
+    for rel in governed_meta_docs():
         path = ROOT / rel
-        if not path.exists():
-            continue
         text = path.read_text(encoding="utf-8")
         for field in ("Status:", "Owner:", "Last verified:"):
             if field not in text:
@@ -70,10 +87,8 @@ def check_metadata(errors: list[str]) -> None:
 
 def check_freshness(errors: list[str]) -> None:
     today = date.today()
-    for rel in META_DOCS:
+    for rel in governed_meta_docs():
         path = ROOT / rel
-        if not path.exists():
-            continue
         text = path.read_text(encoding="utf-8")
         status_match = re.search(r"^Status:\s*(.+)$", text, re.MULTILINE)
         verified_match = re.search(r"^Last verified:\s*(.+)$", text, re.MULTILINE)
@@ -88,11 +103,15 @@ def check_freshness(errors: list[str]) -> None:
         except ValueError:
             errors.append(f"{rel} has non-date Last verified value: {raw}")
             continue
+        if verified > today:
+            errors.append(f"{rel} has future Last verified date: {raw}")
+            continue
         age = (today - verified).days
         if age > STALE_AFTER_DAYS:
             errors.append(
                 f"{rel} is stale ({age} days since verification); review it and update Last verified."
             )
+
 
 def check_links(errors: list[str]) -> None:
     for path in ROOT.rglob("*.md"):
@@ -118,7 +137,17 @@ def check_active_plan(errors: list[str]) -> None:
     if not path.exists():
         return
     text = path.read_text(encoding="utf-8")
-    for heading in ("## Goal", "## Baseline", "## Acceptance criteria", "## Progress", "## Decisions", "## Verification", "## Next action"):
+    for heading in (
+        "## Goal",
+        "## Non-goals",
+        "## Baseline",
+        "## Acceptance criteria",
+        "## Progress",
+        "## Decisions",
+        "## Verification",
+        "## Risks",
+        "## Next action",
+    ):
         if heading not in text:
             errors.append(f"active execution plan missing {heading}")
 
