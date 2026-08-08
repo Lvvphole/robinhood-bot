@@ -73,6 +73,7 @@ Release-critical warnings are errors.
 
 ## Review Loop
 Self-review locally, request independent agent review, address feedback, rerun validation, and repeat until clean.
+For every Codex review finding that is fixed, reply in the same review thread with the implemented fix and verification evidence, then resolve that thread. A Codex fix is not complete until both actions are done.
 Escalate to a human for judgment, policy, live-trading authorization, or unresolved safety ambiguity.
 
 ## Stop Rule
