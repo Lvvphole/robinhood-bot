@@ -48,6 +48,34 @@ def test_service_cannot_import_runtime_or_provider_implementation(tmp_path: Path
     assert any("layer 'services' may not import layer 'providers'" in message for message in result)
 
 
+def test_external_system_integrations_are_provider_only(tmp_path: Path) -> None:
+    package = make_package(tmp_path)
+    (package / "services" / "factor.py").write_text(
+        "from zero_dte_bot.robinhood_gateway import RobinhoodAgentGateway\n"
+        "import openai\n",
+        encoding="utf-8",
+    )
+    result = messages(package)
+    assert any(
+        "layer 'services' may not import provider-only integration 'zero_dte_bot.robinhood_gateway'"
+        in message
+        for message in result
+    )
+    assert any(
+        "layer 'services' may not import provider-only integration 'openai'" in message
+        for message in result
+    )
+
+
+def test_provider_may_wrap_external_system_integration(tmp_path: Path) -> None:
+    package = make_package(tmp_path)
+    (package / "providers" / "broker.py").write_text(
+        "from zero_dte_bot.robinhood_gateway import RobinhoodAgentGateway\n",
+        encoding="utf-8",
+    )
+    assert lint_tree(package) == []
+
+
 def test_unknown_top_level_layer_fails_closed(tmp_path: Path) -> None:
     package = make_package(tmp_path)
     experimental = package / "experimental"
