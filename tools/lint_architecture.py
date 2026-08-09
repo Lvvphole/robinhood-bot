@@ -33,6 +33,20 @@ ALLOWED_IMPORTS = {
     "interfaces": frozenset(LAYERS),
 }
 
+# Known integration surfaces must remain behind provider adapters. This list is
+# intentionally narrow: numerical/scientific libraries are not external-system
+# boundaries, while broker/model/network SDKs and the quarantined legacy gateway are.
+PROVIDER_ONLY_IMPORT_PREFIXES = (
+    "zero_dte_bot.robinhood_gateway",
+    "robin_stocks",
+    "alpaca",
+    "ib_insync",
+    "openai",
+    "anthropic",
+    "httpx",
+    "requests",
+)
+
 
 @dataclass(frozen=True, order=True)
 class Violation:
@@ -104,6 +118,13 @@ def target_layer(module: str, package_name: str = PACKAGE_NAME) -> str | None:
     return parts[1]
 
 
+def provider_only_import(module: str) -> str | None:
+    for prefix in PROVIDER_ONLY_IMPORT_PREFIXES:
+        if module == prefix or module.startswith(prefix + "."):
+            return prefix
+    return None
+
+
 def lint_file(
     path: Path,
     *,
@@ -135,6 +156,17 @@ def lint_file(
 
     violations: list[Violation] = []
     for line, module in imported_modules(tree, path=path, source_root=source_root):
+        provider_boundary = provider_only_import(module)
+        if provider_boundary is not None and layer != "providers":
+            violations.append(
+                Violation(
+                    rel_text,
+                    line,
+                    f"layer '{layer or 'root'}' may not import provider-only integration '{provider_boundary}' via '{module}'",
+                )
+            )
+            continue
+
         imported = target_layer(module, package_name)
         if imported is None:
             continue
