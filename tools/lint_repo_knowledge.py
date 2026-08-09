@@ -9,6 +9,19 @@ ROOT = Path(__file__).resolve().parents[1]
 MAX_AGENTS_LINES = 120
 STALE_AFTER_DAYS = 90
 CLAUDE_CANONICAL = "# CLAUDE.md\n\n@AGENTS.md\n"
+PRODUCT_CONTRACT = "docs/product-specs/investment-decision-platform.md"
+PRODUCT_CONTRACT_HEADINGS = (
+    "## Authority",
+    "## User Story",
+    "## User Experience",
+    "## Goal",
+    "## North Star",
+    "## Desired State",
+    "## Definition of Done",
+    "## Non-goals",
+    "## Success Measures",
+    "## System Lifecycle",
+)
 
 REQUIRED = [
     "AGENTS.md",
@@ -28,6 +41,7 @@ REQUIRED = [
     "docs/exec-plans/tech-debt-tracker.md",
     "docs/generated/repo-map.md",
     "docs/product-specs/index.md",
+    PRODUCT_CONTRACT,
     "docs/product-specs/multifactor-research-system.md",
     "docs/references/evidence-index.md",
     "docs/references/harness-engineering.md",
@@ -87,6 +101,24 @@ def check_claude_contract(errors: list[str]) -> None:
             "CLAUDE.md must exactly match the canonical compatibility entry point so @AGENTS.md "
             "cannot be hidden in a code fence or duplicated with divergent rules"
         )
+
+
+def check_product_contract(errors: list[str]) -> None:
+    path = ROOT / PRODUCT_CONTRACT
+    if path.exists():
+        text = path.read_text(encoding="utf-8")
+        for heading in PRODUCT_CONTRACT_HEADINGS:
+            if heading not in text:
+                errors.append(f"canonical product contract missing {heading}")
+
+    agents = ROOT / "AGENTS.md"
+    if agents.exists():
+        agents_text = agents.read_text(encoding="utf-8")
+        if f"`{PRODUCT_CONTRACT}`" not in agents_text:
+            errors.append(
+                "AGENTS.md must point directly to the canonical product contract: "
+                f"{PRODUCT_CONTRACT}"
+            )
 
 
 def check_metadata(errors: list[str]) -> None:
@@ -170,6 +202,7 @@ def main() -> int:
     check_required(errors)
     check_agents_size(errors)
     check_claude_contract(errors)
+    check_product_contract(errors)
     check_metadata(errors)
     check_freshness(errors)
     check_links(errors)

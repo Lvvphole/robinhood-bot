@@ -9,19 +9,20 @@ Authority for claims and actions:
 No model output is authoritative by itself.
 
 ## Mission
-Build and maintain a research-only, agent-first graph-engineered multi-factor investing system that is auditable, reproducible, risk-bounded, and economical in human attention.
+Build and maintain a research-only, agent-first graph-engineered investment decision platform that turns point-in-time market evidence into governed, reproducible portfolio proposals while remaining risk-bounded and economical in human attention.
 Humans steer: define intent, acceptance criteria, priorities, and approvals. Agents execute: design, implement, test, review, document, and maintain repository artifacts.
 
 ## Start Here
 Read only what the task needs, in this order:
 1. `ARCHITECTURE.md` — domain map, dependency directions, graph/runtime boundaries.
 2. `docs/design-docs/index.md` — design records and verification status.
-3. `docs/product-specs/index.md` — product/research contracts.
-4. `docs/PLANS.md` — planning rules and active execution plans.
-5. `docs/RELIABILITY.md` — determinism, data integrity, testing, risk, replay.
-6. `docs/SECURITY.md` — secrets, broker permissions, live-order boundary.
-7. `docs/QUALITY_SCORE.md` — current gaps and quality grades.
-8. `docs/references/evidence-index.md` — evidence classes and research sources.
+3. `docs/product-specs/investment-decision-platform.md` — canonical user story, user experience, goal, desired state, and product definition of done.
+4. `docs/product-specs/index.md` — subordinate product and research contracts.
+5. `docs/PLANS.md` — planning rules and active execution plans.
+6. `docs/RELIABILITY.md` — determinism, data integrity, testing, risk, replay.
+7. `docs/SECURITY.md` — secrets, broker permissions, live-order boundary.
+8. `docs/QUALITY_SCORE.md` — current gaps and quality grades.
+9. `docs/references/evidence-index.md` — evidence classes and research sources.
 
 Use progressive disclosure. Do not load the whole knowledge base unless the task requires it.
 
