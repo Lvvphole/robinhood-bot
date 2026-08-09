@@ -5,6 +5,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+from tools.lint_repo_knowledge import markdown_level_two_headings
+
 ROOT = Path(__file__).resolve().parents[1]
 CLAUDE_CANONICAL = "# CLAUDE.md\n\n@AGENTS.md\n"
 PRODUCT_CONTRACT = ROOT / "docs/product-specs/investment-decision-platform.md"
@@ -56,9 +58,22 @@ def test_claude_code_contract_is_canonical_import() -> None:
 
 
 def test_canonical_product_contract_has_required_sections() -> None:
-    text = PRODUCT_CONTRACT.read_text(encoding="utf-8")
+    headings = markdown_level_two_headings(PRODUCT_CONTRACT.read_text(encoding="utf-8"))
     for heading in PRODUCT_CONTRACT_HEADINGS:
-        assert heading in text
+        assert heading in headings
+
+
+def test_product_heading_parser_rejects_noncanonical_contexts() -> None:
+    text = """### Goal
+## Goalkeeper
+```markdown
+## Goal
+```
+## User Story
+"""
+    headings = markdown_level_two_headings(text)
+    assert "## Goal" not in headings
+    assert "## User Story" in headings
 
 
 def test_agents_points_to_canonical_product_contract() -> None:
