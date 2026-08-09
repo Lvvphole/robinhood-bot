@@ -69,6 +69,7 @@ Prefer inspectable, composable dependencies; opaque behavior must be wrapped beh
 ## Validation Commands
 Run before proposing completion:
 `python tools/lint_repo_knowledge.py`
+`python tools/lint_architecture.py`
 `python tools/generate_repo_map.py --check`
 `pytest`
 Release-critical warnings are errors.

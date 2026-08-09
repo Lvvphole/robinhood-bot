@@ -16,5 +16,6 @@ jobs:
       - run: python -m pip install --upgrade pip
       - run: python -m pip install -e ".[dev]"
       - run: python tools/lint_repo_knowledge.py
+      - run: python tools/lint_architecture.py
       - run: python tools/generate_repo_map.py --check
       - run: pytest

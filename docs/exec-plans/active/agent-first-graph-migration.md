@@ -2,7 +2,7 @@
 
 Status: ACTIVE
 Owner: repository
-Last verified: 2026-08-08
+Last verified: 2026-08-09
 
 ## Goal
 Migrate the repository from a single tactical Python research package to an agent-legible graph-engineering system without changing live-trading authorization or claiming unverified trading performance.
@@ -13,7 +13,7 @@ Migrate the repository from a single tactical Python research package to an agen
 - Do not rewrite deterministic finance logic solely to fit an orchestration framework.
 
 ## Baseline
-At the start of the Product Authority Alignment slice, `main` already contains the root `AGENTS.md`, canonical `CLAUDE.md` compatibility entry point, structured repository knowledge base, repository-contract CI, target architecture, and the quarantined `src/zero_dte_bot/` legacy module. The product purpose and definition of done were still distributed across mission, product-sense, research, and migration documents rather than codified as one canonical product contract. No graph runtime or target graph packages are implemented, live placement remains disabled, and verified OOS performance remains absent.
+At the start of the architecture-boundary enforcement slice, `main` already contains the authoritative product contract, progressive-disclosure repository knowledge base, repository-contract CI, target architecture, and quarantined `src/zero_dte_bot/` legacy module. The target package boundaries were documented but not executable: no `src/investment_platform/` package skeleton or structural dependency linter existed. No graph runtime or target factor implementations are present, live placement remains disabled, and verified OOS performance remains absent.
 
 ## Acceptance criteria
 - short root `AGENTS.md` acts as table of contents;
@@ -21,7 +21,8 @@ At the start of the Product Authority Alignment slice, `main` already contains t
 - structured docs are repository system of record;
 - knowledge-base structure, canonical product sections, and links are mechanically linted in CI;
 - target architecture and legacy quarantine are explicit;
-- later implementation adds structural import tests before moving graph code;
+- target Python layer packages exist before graph runtime code;
+- structural import rules are mechanically enforced in CI with regression tests for allowed and forbidden dependencies;
 - no change weakens existing risk or promotion gates.
 
 ## Progress
@@ -31,7 +32,7 @@ At the start of the Product Authority Alignment slice, `main` already contains t
 - [x] Add CI contract job.
 - [x] Add Claude Code compatibility entry point without duplicating authoritative rules.
 - [x] Codify canonical product authority and mechanically require its core sections.
-- [ ] Add executable architecture dependency linter with package migration.
+- [x] Add executable architecture dependency linter and target package skeleton.
 - [ ] Introduce typed graph schemas and Slate/Onyx program.
 - [ ] Implement seven factor nodes and deterministic validator.
 
@@ -39,16 +40,19 @@ At the start of the Product Authority Alignment slice, `main` already contains t
 - Preserve deterministic Python finance code; orchestration does not justify a rewrite.
 - Quarantine `src/zero_dte_bot/` as legacy until migrated.
 - The top-level product contract governs subsystem research specs and execution plans.
+- `src/investment_platform/` is the target package root; its internal imports must satisfy the executable layer policy in `ARCHITECTURE.md`.
+- Provider implementations remain outside domain-service dependencies; runtime/interfaces perform composition.
 - Human merge approval remains mandatory despite higher agent autonomy because this is a financial-risk repository.
 
 ## Verification
-Run `python tools/lint_repo_knowledge.py`, `python tools/generate_repo_map.py --check`, and `pytest`.
+Run `python tools/lint_repo_knowledge.py`, `python tools/lint_architecture.py`, `python tools/generate_repo_map.py --check`, and `pytest`.
 
 ## Risks
 - Documentation and implementation can drift if repository-knowledge checks do not discover newly added governed documents.
 - Product intent can drift if subsystem specifications or migration plans silently redefine the canonical product contract.
+- Structural rules can become ceremonial if imports can bypass layer checks through root re-exports or ungoverned target packages.
 - Graph migration can accidentally weaken live-trading safety boundaries if legacy execution code is moved without explicit promotion gates.
 - New orchestration dependencies can add complexity and cost without measurable reliability benefit.
 
 ## Next action
-Implement the executable architecture dependency linter with structural package-boundary tests before adding graph runtime code.
+Introduce typed graph contracts/schemas inside the governed target package and verify them before adding Slate/Onyx runtime behavior or factor implementations.

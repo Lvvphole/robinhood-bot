@@ -34,6 +34,14 @@ Do not hand-edit. Regenerate with `python tools/generate_repo_map.py`.
 - `docs/references/harness-engineering.md`
 - `examples/data_schema.md`
 - `pyproject.toml`
+- `src/investment_platform/__init__.py`
+- `src/investment_platform/config/__init__.py`
+- `src/investment_platform/contracts/__init__.py`
+- `src/investment_platform/interfaces/__init__.py`
+- `src/investment_platform/providers/__init__.py`
+- `src/investment_platform/repositories/__init__.py`
+- `src/investment_platform/runtime/__init__.py`
+- `src/investment_platform/services/__init__.py`
 - `src/zero_dte_bot/__init__.py`
 - `src/zero_dte_bot/backtest.py`
 - `src/zero_dte_bot/broker.py`
@@ -48,10 +56,12 @@ Do not hand-edit. Regenerate with `python tools/generate_repo_map.py`.
 - `src/zero_dte_bot/robinhood_gateway.py`
 - `src/zero_dte_bot/strategy.py`
 - `src/zero_dte_bot/validation.py`
+- `tests/test_architecture_contract.py`
 - `tests/test_backtest_smoke.py`
 - `tests/test_config.py`
 - `tests/test_greeks.py`
 - `tests/test_repo_contract.py`
 - `tests/test_validation.py`
 - `tools/generate_repo_map.py`
+- `tools/lint_architecture.py`
 - `tools/lint_repo_knowledge.py`

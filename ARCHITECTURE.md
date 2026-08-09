@@ -2,7 +2,7 @@
 
 Status: TARGET_WITH_LEGACY_COMPATIBILITY
 Owner: repository
-Last verified: 2026-08-08
+Last verified: 2026-08-09
 
 ## Purpose
 This is the top-level architecture map. Detailed design rationale lives in `docs/design-docs/`.
@@ -69,6 +69,27 @@ contracts/types -> config -> repositories -> services -> runtime -> interfaces
 - `providers`: the only boundary for broker, market-data, clock, model, and observability implementations.
 
 Cross-domain imports that bypass this direction are prohibited. External systems enter through providers, never directly from factor or portfolio logic.
+
+## Executable Python import contract
+The target Python package root is `src/investment_platform/`. Its layer packages are `contracts`, `config`, `repositories`, `services`, `providers`, `runtime`, and `interfaces`.
+
+The diagram above describes system flow. Python source dependencies point inward toward lower-level contracts. The executable import policy is:
+
+| Source layer | May import target layers |
+|---|---|
+| `contracts` | `contracts` |
+| `config` | `contracts`, `config` |
+| `repositories` | `contracts`, `config`, `repositories` |
+| `services` | `contracts`, `config`, `repositories`, `services` |
+| `providers` | `contracts`, `config`, `repositories`, `providers` |
+| `runtime` | `contracts`, `config`, `repositories`, `services`, `providers`, `runtime` |
+| `interfaces` | all governed target layers |
+
+Provider implementations are adapters. Domain services and repository abstractions do not import concrete providers; runtime or interface composition wires providers to domain behavior. Bare imports from the `investment_platform` package root are prohibited so root re-exports cannot bypass layer enforcement. New top-level target layers fail closed until this architecture contract is explicitly amended.
+
+`tools/lint_architecture.py` enforces this policy using static Python import analysis, and `tests/test_architecture_contract.py` verifies allowed composition, forbidden forward dependencies, provider isolation, unknown-layer rejection, root re-export rejection, and required package markers.
+
+The legacy `src/zero_dte_bot/` package is intentionally outside this target-package import contract until migrated under an execution plan.
 
 ## Legacy boundary
 `src/zero_dte_bot/` is the current tactical research module. It is quarantined as legacy until migrated by execution plan. Do not add new graph architecture inside it except safety fixes required to preserve behavior.
