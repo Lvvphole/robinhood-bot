@@ -54,6 +54,7 @@ GOVERNED_DIRS = [
     ROOT / "docs/references",
 ]
 LINK = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
+FENCE_START = re.compile(r"^ {0,3}(`{3,}|~{3,})")
 
 
 def governed_meta_docs() -> list[str]:
@@ -68,6 +69,31 @@ def governed_meta_docs() -> list[str]:
             for path in directory.rglob("*.md"):
                 paths.add(path.relative_to(ROOT).as_posix())
     return sorted(paths)
+
+
+def markdown_level_two_headings(text: str) -> set[str]:
+    headings: set[str] = set()
+    fence_char: str | None = None
+    fence_len = 0
+    for line in text.splitlines():
+        if fence_char is None:
+            fence_match = FENCE_START.match(line)
+            if fence_match:
+                marker = fence_match.group(1)
+                fence_char = marker[0]
+                fence_len = len(marker)
+                continue
+            if line.startswith("## "):
+                headings.add(line)
+            continue
+
+        if re.fullmatch(
+            rf" {{0,3}}{re.escape(fence_char)}{{{fence_len},}}[ \t]*",
+            line,
+        ):
+            fence_char = None
+            fence_len = 0
+    return headings
 
 
 def fail(message: str) -> None:
@@ -106,10 +132,10 @@ def check_claude_contract(errors: list[str]) -> None:
 def check_product_contract(errors: list[str]) -> None:
     path = ROOT / PRODUCT_CONTRACT
     if path.exists():
-        text = path.read_text(encoding="utf-8")
+        headings = markdown_level_two_headings(path.read_text(encoding="utf-8"))
         for heading in PRODUCT_CONTRACT_HEADINGS:
-            if heading not in text:
-                errors.append(f"canonical product contract missing {heading}")
+            if heading not in headings:
+                errors.append(f"canonical product contract missing exact level-two heading {heading}")
 
     agents = ROOT / "AGENTS.md"
     if agents.exists():
