@@ -28,6 +28,7 @@ Do not hand-edit. Regenerate with `python tools/generate_repo_map.py`.
 - `docs/exec-plans/completed/index.md`
 - `docs/exec-plans/tech-debt-tracker.md`
 - `docs/product-specs/index.md`
+- `docs/product-specs/investment-decision-platform.md`
 - `docs/product-specs/multifactor-research-system.md`
 - `docs/references/evidence-index.md`
 - `docs/references/harness-engineering.md`

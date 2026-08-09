@@ -9,6 +9,19 @@ ROOT = Path(__file__).resolve().parents[1]
 MAX_AGENTS_LINES = 120
 STALE_AFTER_DAYS = 90
 CLAUDE_CANONICAL = "# CLAUDE.md\n\n@AGENTS.md\n"
+PRODUCT_CONTRACT = "docs/product-specs/investment-decision-platform.md"
+PRODUCT_CONTRACT_HEADINGS = (
+    "## Authority",
+    "## User Story",
+    "## User Experience",
+    "## Goal",
+    "## North Star",
+    "## Desired State",
+    "## Definition of Done",
+    "## Non-goals",
+    "## Success Measures",
+    "## System Lifecycle",
+)
 
 REQUIRED = [
     "AGENTS.md",
@@ -28,6 +41,7 @@ REQUIRED = [
     "docs/exec-plans/tech-debt-tracker.md",
     "docs/generated/repo-map.md",
     "docs/product-specs/index.md",
+    PRODUCT_CONTRACT,
     "docs/product-specs/multifactor-research-system.md",
     "docs/references/evidence-index.md",
     "docs/references/harness-engineering.md",
@@ -40,6 +54,7 @@ GOVERNED_DIRS = [
     ROOT / "docs/references",
 ]
 LINK = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
+FENCE_START = re.compile(r"^ {0,3}(`{3,}|~{3,})")
 
 
 def governed_meta_docs() -> list[str]:
@@ -54,6 +69,31 @@ def governed_meta_docs() -> list[str]:
             for path in directory.rglob("*.md"):
                 paths.add(path.relative_to(ROOT).as_posix())
     return sorted(paths)
+
+
+def markdown_level_two_headings(text: str) -> set[str]:
+    headings: set[str] = set()
+    fence_char: str | None = None
+    fence_len = 0
+    for line in text.splitlines():
+        if fence_char is None:
+            fence_match = FENCE_START.match(line)
+            if fence_match:
+                marker = fence_match.group(1)
+                fence_char = marker[0]
+                fence_len = len(marker)
+                continue
+            if line.startswith("## "):
+                headings.add(line)
+            continue
+
+        if re.fullmatch(
+            rf" {{0,3}}{re.escape(fence_char)}{{{fence_len},}}[ \t]*",
+            line,
+        ):
+            fence_char = None
+            fence_len = 0
+    return headings
 
 
 def fail(message: str) -> None:
@@ -87,6 +127,24 @@ def check_claude_contract(errors: list[str]) -> None:
             "CLAUDE.md must exactly match the canonical compatibility entry point so @AGENTS.md "
             "cannot be hidden in a code fence or duplicated with divergent rules"
         )
+
+
+def check_product_contract(errors: list[str]) -> None:
+    path = ROOT / PRODUCT_CONTRACT
+    if path.exists():
+        headings = markdown_level_two_headings(path.read_text(encoding="utf-8"))
+        for heading in PRODUCT_CONTRACT_HEADINGS:
+            if heading not in headings:
+                errors.append(f"canonical product contract missing exact level-two heading {heading}")
+
+    agents = ROOT / "AGENTS.md"
+    if agents.exists():
+        agents_text = agents.read_text(encoding="utf-8")
+        if f"`{PRODUCT_CONTRACT}`" not in agents_text:
+            errors.append(
+                "AGENTS.md must point directly to the canonical product contract: "
+                f"{PRODUCT_CONTRACT}"
+            )
 
 
 def check_metadata(errors: list[str]) -> None:
@@ -170,6 +228,7 @@ def main() -> int:
     check_required(errors)
     check_agents_size(errors)
     check_claude_contract(errors)
+    check_product_contract(errors)
     check_metadata(errors)
     check_freshness(errors)
     check_links(errors)

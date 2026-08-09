@@ -4,6 +4,8 @@ Status: ACTIVE
 Owner: repository
 Last verified: 2026-08-08
 
+Canonical product intent, user experience, desired state, and definition of done live in [Investment Decision Platform](product-specs/investment-decision-platform.md). This file defines product-judgment principles and is subordinate to that contract.
+
 The product is not "an autonomous trader." It is a governed research and decision system whose outputs are only as valuable as their evidence, reproducibility, and failure containment.
 
 Optimize for:
