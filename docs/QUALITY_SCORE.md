@@ -2,15 +2,15 @@
 
 Status: BASELINE
 Owner: repository
-Last verified: 2026-08-08
+Last verified: 2026-08-09
 
 Grades represent repository evidence, not intent.
 
 | Domain | Grade | Evidence / gap |
 |---|---|---|
-| Agent entrypoint / progressive disclosure | A- | scaffold defined; must land in repo and CI |
-| Knowledge-base structure | A- | scaffold + linter + weekly drift detector; autonomous fix-up PR agent not yet integrated |
-| Architecture legibility | B | target layers documented; executable dependency linter not yet implemented |
+| Agent entrypoint / progressive disclosure | A | `AGENTS.md` + canonical `CLAUDE.md` import are landed and CI-enforced |
+| Knowledge-base structure | A- | structured docs + linter + weekly drift detector; autonomous fix-up PR agent not yet integrated |
+| Architecture legibility | A- | target layers documented; executable import linter and structural regression tests enforce package boundaries |
 | Graph runtime | D | Slate/Onyx program absent |
 | Factor implementations | D | seven-factor nodes absent |
 | Deterministic legacy research code | B | existing package/tests; migration not complete |
