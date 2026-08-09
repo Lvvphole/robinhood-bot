@@ -5,9 +5,11 @@ import subprocess
 import sys
 from pathlib import Path
 
-from tools.lint_repo_knowledge import markdown_level_two_headings
-
 ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "tools"))
+
+from lint_repo_knowledge import markdown_level_two_headings
+
 CLAUDE_CANONICAL = "# CLAUDE.md\n\n@AGENTS.md\n"
 PRODUCT_CONTRACT = ROOT / "docs/product-specs/investment-decision-platform.md"
 PRODUCT_CONTRACT_HEADINGS = (
